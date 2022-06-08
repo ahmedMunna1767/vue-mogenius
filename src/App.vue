@@ -38,11 +38,11 @@ const connect = async () => {
     }
     else {
       messageArray.value.push(JSON.parse(jsonMsg.body));
-      
-      if(messageArray.value.length > 5){
+
+      if (messageArray.value.length > 5) {
         window.scrollBy(0, 250);
         console.log("Scrolling");
-      } 
+      }
     }
   };
 
@@ -53,7 +53,7 @@ const connect = async () => {
   socket.onerror = error => {
     console.log("Socket1 Error: ", error);
   };
-  
+
 
   console.log("Exiting");
   return socket;
@@ -79,17 +79,23 @@ const SendMessage = () => {
     <div class="login-form">
       <div class="form-inner">
         <h1>What Should We Call You</h1>
-        <input type="text" v-model="inputUsername" placeholder="Please enter a name e.g. Dragon123" />
+        <input type="text" v-model="inputUsername" placeholder="Please enter a cool name" />
         <button @click="enterChat">Enter Chat Room</button>
-        <div></div>
-        <h4>This is a realtime websocket chat app built using Golang and vue</h4>
-        <h4>Currently It doesn't store any messages or remembers any of the user. </h4>
-        <h4>Git repo link <a href="">Frontend</a> &nbsp;<a href="">Backend</a></h4>
+        <div class="Intro">
+          <ul>
+            <li>This is a realtime websocket chat app built using Golang and vue.....</li>
+            <li>Currently It doesn't store any messages or remembers any of the user.... </li>
+            <li>If No one is Online Open two different tabs and Kindly have a go</li>
+
+            <li>Git repo links: <a href="https://github.com/ahmedMunna1767/vue-mogenius.git">Frontend</a> &nbsp;<a
+                href="https://github.com/ahmedMunna1767/go-vue-socket-chat.git">Backend....</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 
-  <div  class="view chat" v-else>
+  <div class="view chat" v-else>
     <header>
       <div class="header-wrapper">
         <h3>Welcome, {{ username }}</h3>
@@ -147,10 +153,15 @@ const SendMessage = () => {
 
 .view {
   margin: auto;
-  width: 50%;
+  width: 80%;
   display: flex;
   justify-content: center;
   min-height: 100vh;
+
+  @media only screen and (max-width: 1000px) {
+    width: 95%;
+  }
+
 
   overflow-y: scroll hr {
     display: block;
@@ -185,13 +196,39 @@ const SendMessage = () => {
           margin-bottom: 30px;
         }
 
+        .Intro {
+          border-radius: 10px;
+
+          ul {
+            margin-top: 5px;
+            font-size: larger;
+            list-style: none;
+
+            li {
+              background-color: var(--flashorange);
+              margin: auto;
+              padding: 5px;
+
+              a {
+                cursor: pointer;
+                display: block;
+                width: 10rem;
+                background-color: var(--blue);
+                border-radius: 8px;
+                color: var(--mineshaft);
+                padding: 5px;
+              }
+            }
+          }
+        }
+
         input[type="text"] {
           appearance: none;
           border: none;
           outline: none;
           background: none;
           display: block;
-          width: 100%;
+          width: 65%;
           padding: 10px 15px;
           border-radius: 8px;
           margin-bottom: 15px;
@@ -203,20 +240,30 @@ const SendMessage = () => {
           transition: 0.4s;
 
           &::placeholder {
-            color: var(--turqouise);
+            color: var(--scorpion);
             transition: 0.4s;
           }
+
+          @media only screen and (max-width: 1200px) {
+            width: 80%;
+          }
+
         }
 
         button {
           cursor: pointer;
           display: block;
-          width: 100%;
+          width: 65%;
           padding: 10px 15px;
           background-color: var(--blue);
           border-radius: 8px;
           color: var(--mineshaft);
           font-size: 18px;
+          margin-bottom: 30px;
+
+          @media only screen and (max-width: 1200px) {
+            width: 80%;
+          }
         }
 
         button:hover {
@@ -244,20 +291,25 @@ const SendMessage = () => {
 
 
     header {
-      width: 50%;
+      width: 80%;
       position: fixed;
       display: flex;
       justify-content: center;
       align-items: center;
       margin-bottom: 10px;
-      padding: 5px;
-      border-radius: 999px;
+      padding: 15px;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-      background-color: var(--flashorange);
+      background-color: var(--mineshaft);
+
+      @media only screen and (max-width: 1000px) {
+        width: 95%;
+      }
+
+
       .header-wrapper {
         h3 {
-          background-color: var(--flashorange);
-          color: var(--wildsand);
+          background-color: var(--mineshaft);
+          color: var(--malta);
         }
       }
     }
@@ -271,6 +323,7 @@ const SendMessage = () => {
       flex: 1 1 100%;
       padding: 30px;
       min-height: 100vh;
+
       .message {
         display: flex;
         margin-bottom: 15px;
