@@ -21,7 +21,7 @@ const enterChat = async () => {
 }
 
 const connect = async () => {
-  let clodUrl = "ws://go-socket-chat-n070lf:8080/ws";
+  let clodUrl = "ws://go-socket-chat-n070lf:443/ws";
 
   // let clodUrl = "ws://go-socket-chat-prod-ahmed-munna2-820pj8.mo1.mogenius.io:80/ws";
   // let localUrl = "ws://localhost:8080/ws";
