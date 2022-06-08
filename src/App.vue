@@ -21,18 +21,33 @@ const enterChat = async () => {
 }
 
 const connect = async () => {
-  let clodUrl = "wss://go-socket-chat-n070lf:443/ws";
+  let clodUrl1 = "wss://go-socket-chat-n070lf:443/ws";
+  let clodUrl2 = "wss://go-socket-chat-n070lf/ws";
 
-  // let clodUrl = "ws://go-socket-chat-prod-ahmed-munna2-820pj8.mo1.mogenius.io:80/ws";
+  let clodUrl3 = "ws://go-socket-chat-prod-ahmed-munna2-820pj8.mo1.mogenius.io:80/ws";
+  let clodUrl4 = "wss://go-socket-chat-prod-ahmed-munna2-820pj8.mo1.mogenius.io/ws";
+  
   // let localUrl = "wss://localhost:8080/ws";
-  var socket = new WebSocket(clodUrl);
+  var socket1 = new WebSocket(clodUrl1);
+  var socket2 = new WebSocket(clodUrl2);
+  var socket3 = new WebSocket(clodUrl3);
+  var socket4 = new WebSocket(clodUrl4);
   console.log("Attempting Connection...");
 
-  socket.onopen = () => {
-    console.log("Successfully Connected");
+  socket1.onopen = () => {
+    console.log("Successfully 1Connected");
+  };
+  socket2.onopen = () => {
+    console.log("Successfully 2Connected");
+  };
+  socket3.onopen = () => {
+    console.log("Successfully 3Connected");
+  };
+  socket4.onopen = () => {
+    console.log("Successfully 4Connected");
   };
 
-  socket.onmessage = msg => {
+  socket1.onmessage = msg => {
     const jsonMsg = JSON.parse(msg.data);
     console.log(jsonMsg.type);
     if (jsonMsg.type === 0) {
@@ -52,12 +67,21 @@ const connect = async () => {
     console.log("Socket Closed Connection: ", event);
   };
 
-  socket.onerror = error => {
-    console.log("Socket Error: ", error);
+  socket1.onerror = error => {
+    console.log("Socket1 Error: ", error);
+  };
+  socket2.onerror = error => {
+    console.log("Socket2 Error: ", error);
+  };
+  socket3.onerror = error => {
+    console.log("Socket3 Error: ", error);
+  };
+  socket4.onerror = error => {
+    console.log("Socket4 Error: ", error);
   };
 
   console.log("Exiting");
-  return socket;
+  return socket1;
 };
 
 const SendMessage = () => {
