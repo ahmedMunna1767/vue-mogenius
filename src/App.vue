@@ -87,8 +87,14 @@ const SendMessage = () => {
             <li>Currently It doesn't store any messages or remembers any of the user.... </li>
             <li>If No one is Online Open two different tabs and Kindly have a go</li>
 
-            <li>Git repo links: <a href="https://github.com/ahmedMunna1767/vue-mogenius.git">Frontend</a> &nbsp;<a
-                href="https://github.com/ahmedMunna1767/go-vue-socket-chat.git">Backend....</a></li>
+            <li>Git repo links: <span>
+              <a href="https://github.com/ahmedMunna1767/vue-mogenius.git">Frontend</a> 
+            </span> 
+              &nbsp;
+            <span>
+              <a href="https://github.com/ahmedMunna1767/go-vue-socket-chat.git">Backend....</a>
+            </span>
+              </li>
           </ul>
         </div>
       </div>
@@ -203,15 +209,18 @@ const SendMessage = () => {
             margin-top: 5px;
             font-size: larger;
             list-style: none;
+            background-color: var(--flashorange);
+            border-radius: 10;
 
             li {
+              border-radius: 10;
               background-color: var(--flashorange);
-              margin: auto;
+              margin-bottom: 10px;
               padding: 5px;
 
               a {
                 cursor: pointer;
-                display: block;
+                display: inline;
                 width: 10rem;
                 background-color: var(--blue);
                 border-radius: 8px;
