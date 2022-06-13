@@ -1,14 +1,13 @@
 <script setup>
-import { ref } from "vue";
 
+import ModalComponent from "./components/ModalComponent";
+import { ref } from "vue";
+const showModal = ref(false);
 const username = ref("");
 const inputUsername = ref("");
 const inputMessage = ref("");
-
 const totalOnline = ref(0);
-
 const messageArray = ref([])
-
 const socketObj = ref();
 
 const enterChat = async () => {
@@ -18,6 +17,7 @@ const enterChat = async () => {
   }
   console.log("Attempting to Connect");
   socketObj.value = await connect();
+  showModal.value = false;
 }
 
 const connect = async () => {
@@ -47,6 +47,7 @@ const connect = async () => {
   };
 
   socket.onclose = event => {
+    showModal.value = true;
     console.log("Socket Closed Connection: ", event);
   };
 
@@ -75,61 +76,117 @@ const SendMessage = () => {
 </script>
 
 <template>
-  <div class="view login" v-if="username === '' || username === null">
-    <div class="login-form">
-      <div class="form-inner">
-        <h1>What Should We Call You</h1>
-        <input type="text" v-model="inputUsername" placeholder="Please enter a cool name" />
-        <button @click="enterChat">Enter Chat Room</button>
-        <div class="Intro">
-          <ul>
-            <li>This is a realtime websocket chat app built using Golang and vue.....</li>
-            <li>Currently It doesn't store any messages or remembers any of the user.... </li>
-            <li>If No one is Online Open two different tabs and Kindly have a go</li>
 
-            <li>Git repo links: <span>
-              <a href="https://github.com/ahmedMunna1767/vue-mogenius.git">Frontend</a> 
-            </span> 
-              &nbsp;
-            <span>
-              <a href="https://github.com/ahmedMunna1767/go-vue-socket-chat.git">Backend....</a>
-            </span>
-              </li>
+  <Teleport to="body">
+    <ModalComponent :show="showModal" @close="enterChat">
+      <template #header>
+        <h5>You Have been disconnected due to inactivity</h5>
+      </template>
+    </ModalComponent>
+  </Teleport>
+
+
+  <div class="container-fluid mt-5" v-if="username === '' || username === null">
+    <div class="card bg-light">
+      <div class="m-2">
+        <div class="card-title pt-5">
+          <h1 class="text-primary">Online Group Messeneger</h1>
+          <hr />
+          <div class="container row justify-content-around">
+            <input class="form form-control m-1 col-6" type="text" v-model="inputUsername" placeholder="Enter a name" />
+            <button class="btn btn-outline-primary m-1 col" @click="enterChat">Enter Chat Room</button>
+          </div>
+        </div>
+        <div class="card-body border">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item lead bg-info text-dark mb-1">This is a realtime websocket chat app built using
+              Golang and Vue</li>
+            <li class="list-group-item lead bg-info text-danger mb-1">Any msg sent will be received by server and server will broadcast it to 
+              all the Currently online users. 
+            </li>
+            <li class="list-group-item lead bg-info text-dark mb-1">Currently It doesn't store any messages or remembers
+              any of the user</li>
+            <li class="list-group-item lead bg-info text-dark mb-1">If No one is Online Open two different tabs and
+              Kindly have a go</li>
+
+            <li class="list-group-item lead bg-success text-white mb-3">Source Code: &nbsp; &nbsp;
+              <div>
+                <span>
+                  <a class="btn btn-primary" href="https://github.com/ahmedMunna1767/vue-mogenius.git">Frontend</a>
+                </span>
+                &nbsp;
+                <span>
+                  <a class="btn btn-primary"
+                    href="https://github.com/ahmedMunna1767/go-vue-socket-chat.git">Backend</a>
+                </span>
+
+              </div>
+            </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="view chat" v-else>
-    <header>
-      <div class="header-wrapper">
-        <h3>Welcome, {{ username }}</h3>
-        <h3>Total Online: {{ totalOnline }}</h3>
-      </div>
-    </header>
 
-    <section class="chat-box">
-      <div id="chatDivID" v-for="message in messageArray" :key="message"
-        :class="(message.user === username ? 'message current-user' : 'message')">
-        <div class="message-inner">
-          <div class="username">{{ message.user === username ? 'me' : message.user }}</div>
-          <div class="content">{{ message.messageBody }}</div>
-          <hr />
-        </div>
+  <div class="" v-else>
+    <nav class="navbar fixed-top navbar-light bg-success">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="" width="50" height="50">
+        </a>
+        <p class="navbar-brand mb-0 h1 text-center text-white">Welcome, {{ username }}</p> <span
+          class="navbar-brand mb-0 h3 text-end text-white">Total Online: {{ totalOnline }}</span>
       </div>
+    </nav>
+
+    <section class="chatbox d-flex flex-column overflow-scroll container-fluid my-5 py-5">
+      <ul class="list-group list-unstyled">
+        <div  v-for="message in messageArray" :key="message">
+          <li v-if="(message.user !== username)" class="d-flex justify-content-start mb-3">
+
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp" alt="avatar"
+                    class="rounded-circle d-flex align-self-end ms-3 shadow-1-strong" width="25">
+            <div class="card" style="width: 30rem;">
+              <div class="card-header d-flex justify-content-start p-1">
+                <p class="mb-0 p-3 pt-1 pb-1 lead">{{message.user}}</p>
+              </div>
+              <div class="card-body p-3 pt-1 pb-1">
+                <p class="mb-0">
+                  {{ message.messageBody }}
+                </p>
+              </div>
+            </div>
+          </li>
+          <li v-else class="d-flex justify-content-end mb-3" >
+            <div class="card" style="width: 30rem;">
+              <div class="card-header d-flex justify-content-end p-1">
+                <p class="mb-0 lead p-3 pt-1 pb-1">Me</p>
+              </div>
+              <div class="card-body p-3 pt-1 pb-1">
+                <p class="mb-0">
+                  {{ message.messageBody }}
+                </p>
+              </div>
+            </div>
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar"
+                    class="rounded-circle d-flex align-self-end ms-3 shadow-1-strong" width="25">
+          </li>
+        </div>
+      </ul>
     </section>
 
-    <footer>
-      <form @submit.prevent="SendMessage">
-        <input type="text" v-model="inputMessage" placeholder="Write a message..." />
-        <input type="submit" value="Send" />
+    <nav class="navbar fixed-bottom navbar-light bg-success">
+      <form @submit.prevent="SendMessage" class="container-fluid m-10 mt-0 mb-0">
+        <div class="input-group">
+          <span class="input-group-text" id="basic-addon1">Hit Enter To Send</span>
+          <input type="text" v-model="inputMessage" class="form-control" placeholder="Enter Your Message Here">
+        </div>
       </form>
-    </footer>
+    </nav>
   </div>
 </template>
-
-<style lang="scss">
+<style scoped>
 :root {
   --blue: #1e90ff;
   --white: #ffffff;
@@ -143,294 +200,7 @@ const SendMessage = () => {
   --malta: #bdafa1;
 }
 
-
-* {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: var(--pastelgreen);
-
-  transition: all .5s ease-out;
-
-}
-
-.view {
-  margin: auto;
-  width: 80%;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-
-  @media only screen and (max-width: 1000px) {
-    width: 95%;
-  }
-
-
-  overflow-y: scroll hr {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: inset;
-    border-width: 1px;
-  }
-
-
-  &.login {
-    align-items: center;
-
-    .login-form {
-      display: block;
-      width: 100%;
-      padding: 15px;
-
-      .form-inner {
-        display: block;
-        padding: 50px 15px;
-        border-radius: 16px;
-        background-color: var(--mineshaft);
-        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5);
-
-        h1 {
-          background-color: var(--mineshaft);
-          color: var(--turqouise);
-          font-size: 28px;
-          margin-bottom: 30px;
-        }
-
-        .Intro {
-          border-radius: 10px;
-
-          ul {
-            margin-top: 5px;
-            font-size: larger;
-            list-style: none;
-            background-color: var(--flashorange);
-            border-radius: 10;
-
-            li {
-              border-radius: 10;
-              background-color: var(--flashorange);
-              margin-bottom: 10px;
-              padding: 5px;
-
-              a {
-                cursor: pointer;
-                display: inline;
-                width: 10rem;
-                background-color: var(--blue);
-                border-radius: 8px;
-                color: var(--mineshaft);
-                padding: 5px;
-              }
-            }
-          }
-        }
-
-        input[type="text"] {
-          appearance: none;
-          border: none;
-          outline: none;
-          background: none;
-          display: block;
-          width: 65%;
-          padding: 10px 15px;
-          border-radius: 8px;
-          margin-bottom: 15px;
-
-          color: var(--mineshaft);
-          font-size: 18px;
-          box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
-          background-color: var(--wildsand);
-          transition: 0.4s;
-
-          &::placeholder {
-            color: var(--scorpion);
-            transition: 0.4s;
-          }
-
-          @media only screen and (max-width: 1200px) {
-            width: 80%;
-          }
-
-        }
-
-        button {
-          cursor: pointer;
-          display: block;
-          width: 65%;
-          padding: 10px 15px;
-          background-color: var(--blue);
-          border-radius: 8px;
-          color: var(--mineshaft);
-          font-size: 18px;
-          margin-bottom: 30px;
-
-          @media only screen and (max-width: 1200px) {
-            width: 80%;
-          }
-        }
-
-        button:hover {
-          background-color: var(--turqouise);
-          font-size: larger;
-          transition: all 1s ease-in-out;
-        }
-
-        &:focus-within {
-          input[type="text"] {
-            background-color: var(--white);
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-
-            &::placeholder {
-              color: var(--scorpion);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  &.chat {
-    display: block;
-
-
-    header {
-      width: 80%;
-      position: fixed;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 15px;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-      background-color: var(--mineshaft);
-
-      @media only screen and (max-width: 1000px) {
-        width: 95%;
-      }
-
-
-      .header-wrapper {
-        h3 {
-          background-color: var(--mineshaft);
-          color: var(--malta);
-        }
-      }
-    }
-
-    .chat-box {
-      flex-direction: column;
-      scroll-behavior: auto;
-      border-radius: 24px 24px 0px 0px;
-      background-color: var(--turqouise);
-      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
-      flex: 1 1 100%;
-      padding: 30px;
-      min-height: 100vh;
-
-      .message {
-        display: flex;
-        margin-bottom: 15px;
-        background-color: var(--turqouise);
-        flex-wrap: wrap-reverse;
-
-        .message-inner {
-          background-color: var(--turqouise);
-
-          .username {
-            color: var(--scorpion);
-            font-size: 16px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            padding-right: 15px;
-            background-color: var(--turqouise);
-          }
-
-
-
-          .content {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: var(--white);
-            border-radius: 999px;
-            color: var(--blue);
-            font-size: 18px;
-            line-height: 1.2em;
-            text-align: left;
-          }
-        }
-
-        &.current-user {
-          margin-top: 30px;
-          justify-content: flex-end;
-          text-align: right;
-
-          .message-inner {
-            max-width: 75%;
-
-            .content {
-              color: var(--wildsand);
-              font-weight: 400;
-              background-color: var(--blue);
-            }
-          }
-        }
-      }
-    }
-
-    footer {
-      position: sticky;
-      bottom: 0px;
-      padding: 10px;
-      box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.7);
-      background-color: var(--flashorange);
-
-      form {
-        display: flex;
-        background-color: var(--flashorange);
-
-        input[type="text"] {
-          flex: 1 1 100%;
-          display: block;
-          width: 100%;
-          padding: 10px 15px;
-          border-radius: 8px 8px 8px 8px;
-
-          color: var(--mineshaft);
-          font-size: 18px;
-          box-shadow: 0px 0px 12px rgba(100, 100, 100, 0.2);
-          background-color: var(--wildsand);
-          transition: 0.5s;
-
-          &::placeholder {
-            color: var(--scorpion);
-            transition: all 0.4s ease-in;
-          }
-        }
-
-        input[type="submit"] {
-          cursor: pointer;
-          display: block;
-          padding: 10px 15px;
-          border-radius: 8px 8px 8px 8px;
-          background-color: var(--blue);
-          color: var(--wildsand);
-          font-size: 18px;
-          font-weight: 500;
-          margin-left: 2px;
-        }
-
-        input[type="submit"]:hover {
-          font-size: 19px;
-          margin-left: 4px;
-        }
-      }
-    }
-  }
+.chatbox::-webkit-scrollbar {
+  display: none;
 }
 </style>
